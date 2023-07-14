@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src='jsscripts/edit.js'></script>
+<title>Edit Record</title>
+</head>
+<body>
+<form id='editform' method='post' action='confirmation.php'>
+<p><label for='op'>Operation</label><input name='op' id='op' type='text'/></p>
+<p><label for='zone'>Zone</label><input name='zone' id='zone' type='text'/></p>
+<fieldset id='old'><legend>Old Record Details</legend>
+<p><label for='oldname'>Domain Name</label><input name='oldname' id='oldname' type='text'/></p>
+<p><label for='oldtype'>Type</label><select name='oldtype' id ='oldtype'>
+        <option value='A' selected>A</option>
+        <option value='AAAA'>AAAA</option>
+        <option value='CNAME'>CNAME</option>
+</select></p>
+<p><label for='oldaddress'>Address</label><input name='oldaddress' id='oldaddress' type='text'/></p>
+</fieldset>
+<fieldset id='new'><legend>New Record Details</legend>
+<p><label for='name'>Domain Name</label><input name='name' id='name' type='text'/></p>
+<p><label for='type'>Type</label><select name='type' id ='type'>
+	<option value='A' selected>A</option>
+	<option value='AAAA'>AAAA</option>
+	<option value='CNAME'>CNAME</option>
+</select></p>
+<p><label for='address'>Address</label><input name='address' id='address' type='text'/></p>
+</fieldset>
+<input id='submit' type='submit' value='submit'>
+<a href='zoneview.php'>Return</a>
+</form>
+</body>
+</html>
