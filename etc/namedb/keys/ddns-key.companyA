@@ -1,0 +1,5 @@
+key "ddns-key.proj" {
+        algorithm hmac-md5;
+        secret "BYg0EknSxC78ta2ccJfgow==";
+};
+

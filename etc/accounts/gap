@@ -1,0 +1,16 @@
+#!/usr/local/bin/python
+import sys
+
+def main():
+    accountdb = '/usr/local/etc/accounts/account.db'
+    with open(accountdb) as a:
+        for line in a:
+            lineparts = line.split(":")
+            if(lineparts[0] == sys.argv[1]):
+                perms = lineparts[2].split()
+                for perm in perms:
+                    print(perm)
+                break
+
+if __name__ == '__main__':
+    main()

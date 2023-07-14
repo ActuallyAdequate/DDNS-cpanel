@@ -1,0 +1,18 @@
+$ORIGIN .
+$TTL 86400	; 1 day
+companyB		IN SOA	nsp.proj. admin.proj. (
+				2008070114 ; serial
+				10800      ; refresh (3 hours)
+				3600       ; retry (1 hour)
+				604800     ; expire (1 week)
+				86400      ; minimum (1 day)
+				)
+			NS	nsp.proj.
+$ORIGIN companyB.
+Bserver			A	136.186.230.129
+localhost		A	127.0.0.1
+nsp			A	136.186.230.89
+$TTL 3600	; 1 hour
+RoundServer		A	136.186.230.50
+			A	136.186.230.60
+test			A	192.168.23.3

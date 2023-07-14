@@ -1,0 +1,3 @@
+#!/bin/csh
+
+grep "zone " /usr/local/etc/namedb/named-zones.conf | cut -d '"' -f2

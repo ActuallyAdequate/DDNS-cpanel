@@ -1,0 +1,24 @@
+#!/usr/local/bin/python
+import subprocess
+import sys
+
+def main():
+    zone = sys.argv[1]    
+    types = ["A","AAAA","CNAME","PTR"]
+    for t in types:
+       output = subprocess.getoutput("host -l -t %s %s" %(t,zone))
+       if(output == ""):
+            continue
+       lines = output.split('\n')
+       for l in lines:
+           parts = l.split()
+           line = "%s %s %s\n" %(t,parts[0], parts[len(parts)-1])
+           print(line)
+    
+    
+
+if __name__ == "__main__":
+    main()
+
+
+

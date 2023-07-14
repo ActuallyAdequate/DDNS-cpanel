@@ -1,0 +1,7 @@
+#!/usr/local/bin/python
+
+accountdb = '/usr/local/etc/accounts/account.db'
+with open(accountdb) as a:
+    for line in a:
+        lineparts = line.split(":")
+        print("%s %s" %(lineparts[0],lineparts[1]))

@@ -1,0 +1,16 @@
+$ORIGIN .
+$TTL 3600	; 1 hour
+230.186.136.in-addr.arpa IN SOA	nsp.proj. admin.proj. (
+				2008070159 ; serial
+				10800      ; refresh (3 hours)
+				3600       ; retry (1 hour)
+				604800     ; expire (1 week)
+				86400      ; minimum (1 day)
+				)
+			NS	nsp.proj.
+$ORIGIN 230.186.136.in-addr.arpa.
+129			PTR	Bserver.companyB.
+49			PTR	Aserver.companyA.
+50			PTR	RoundServer.companyB.
+60			PTR	RoundServer.companyB.
+89			PTR	nsp.proj.

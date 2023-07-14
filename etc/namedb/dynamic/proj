@@ -1,0 +1,25 @@
+$ORIGIN .
+$TTL 86400	; 1 day
+proj			IN SOA	nsp.proj. admin.proj. (
+				2008070235 ; serial
+				10800      ; refresh (3 hours)
+				3600       ; retry (1 hour)
+				604800     ; expire (1 week)
+				86400      ; minimum (1 day)
+				)
+			NS	nsp.proj.
+			MX	1 nsp.proj.
+$ORIGIN proj.
+$TTL 3600	; 1 hour
+cool			CNAME	nsp
+csv			A	136.186.230.34
+datafarm		A	124.232.2.4
+$TTL 86400	; 1 day
+localhost		A	127.0.0.1
+$TTL 3600	; 1 hour
+myhost			A	127.0.0.1
+$TTL 86400	; 1 day
+nsp			A	136.186.230.89
+$TTL 3600	; 1 hour
+tsv			CNAME	csv
+zedit			A	23.23.23.23

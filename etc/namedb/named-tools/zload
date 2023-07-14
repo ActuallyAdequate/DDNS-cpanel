@@ -1,0 +1,28 @@
+#!/usr/local/bin/python
+import sys
+import hashlib
+import subprocess
+
+def load():
+    zone = sys.argv[1]
+    filename = sys.argv[2]
+    print("Enter User Name")
+    usr = input()
+    print("Enter Password")
+    passw = input()
+    passhash = hashlib.md5(passw.encode()).hexdigest()
+
+    with open(filename) as f:
+      for line in f:
+          if(line == ""):
+              continue
+          command = "a\n"
+          record = line.split(",")
+          for r in record:
+             command += r + "\n"
+          subprocess.run(["zedit", zone, usr, passhash], input=command.encode(), stdout=subprocess.DEVNULL)
+
+
+
+if __name__ == "__main__":
+   load()

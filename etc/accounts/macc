@@ -1,0 +1,28 @@
+#!/usr/local/bin/python
+import hashlib
+import sys
+
+
+def main():
+    accountdb = '/usr/local/etc/accounts/account.db'
+    user = sys.argv[1]
+    users = {}    
+    with open(accountdb) as a:
+        for line in a:
+            if(line == ""):
+                break
+            lineparts = line.split(":")
+            users[lineparts[0]] = lineparts[1]
+    
+    if(user in users):
+        print("user already exists, exiting")
+    else:
+        perms = ""
+        for i in range(3,len(sys.argv)):
+            perms += " %s" %(sys.argv[i])
+        result = hashlib.md5(sys.argv[2].encode())
+        with open(accountdb, 'a') as a:
+            a.write("%s:%s:%s\n" %(user, result.hexdigest(), perms))
+            
+if __name__ == '__main__':
+    main()

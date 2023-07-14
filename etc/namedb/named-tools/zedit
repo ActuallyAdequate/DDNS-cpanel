@@ -1,0 +1,150 @@
+#! /usr/local/bin/python
+import sys
+import subprocess
+import socket
+import hashlib
+
+############################
+# commands - a list of strings
+############################
+def generate_command_input(commands):
+    input = ""
+    for c in commands:
+        input += c
+        input += "\n"
+    return input
+
+################################
+# op - add or delete
+# dn - domain name
+# ttl - time to live
+# type - record type A AAAA CNAME PTR SRV MX
+# data - the address or name
+################################
+def generate_command_set(zone, op, dn, ttl, type, data):
+    command_set = []
+    command_set.append("zone %s" %(zone))
+    command_set.append("update %s %s %s %s %s" %(op, dn, ttl, type, data))
+    command_set.append("send")
+    return command_set
+
+def get_address_from_name(dn):
+    return socket.gethostbyname(dn)
+
+
+def check_ptr_should_change(data, dn):
+    if(data == ""):
+        data = get_address_from_name(dn)
+    return "136.186.230." in data
+
+def get_ptr_arpa(data,dn):
+   if(data == ""):
+        data = get_address_from_name(dn)
+   address = data[12:]
+   #print(address)
+   return "%s.230.186.136.in-addr.arpa" %(address)
+
+def add_prompts(zone, ptrzone):
+    print ("Enter name of record:")
+    dn = input()
+    if(zone not in dn):
+        dn = dn + "." + zone
+    print("Enter the TTL:")
+    ttl = input()
+    print ("Enter the record type:")
+    type = input()
+    print ("Enter the Address or Name if CNAME:")
+    data = input()
+
+    commands = []
+    commands.extend(generate_command_set(zone,"add",dn,ttl,type,data))
+    if(check_ptr_should_change(data,dn)):
+       arpa  = get_ptr_arpa(data,dn)
+       commands.extend(generate_command_set(ptrzone, "add",arpa,ttl,"PTR",dn))
+    return commands
+
+def delete_prompts(zone, ptrzone):
+    print ("Enter name of record:")
+    dn = input()
+    if(zone not in dn):
+        dn = dn + "." + zone
+    print("Enter the record type")
+    type = input()
+    print("Enter the address of the record [u] if unkown")
+    address = input()
+    if(address == "u"):
+        address=""
+    commands = []
+    commands.extend(generate_command_set(zone,"delete",dn,"",type,address))
+    if(check_ptr_should_change(address,dn)):
+        arpa = get_ptr_arpa(address,dn)
+        commands.extend(generate_command_set(ptrzone, "delete", arpa,"","PTR",dn))
+    return commands
+
+def edit_prompts(zone, ptrzone):
+    commands = []
+
+    print ("Enter details of record to be changed")
+    commands.extend(delete_prompts(zone, ptrzone))
+    print ("Enter new record details")
+    commands.extend(add_prompts(zone,ptrzone))
+    return commands
+
+def authenticateprompts():
+    print("Please Enter your Username")
+    usr = input()
+    print("Please Enter Password for %s" %(usr))
+    passw = input()
+    return authenticate(usr, hashlib.md5(passw.encode()).hexdigest())
+  
+def authenticate(usr, passhash):
+    users = subprocess.getoutput('alist')
+    userpasspairs = users.split("\n")
+    for upp in userpasspairs:
+        up = upp.split(" ")
+        if(usr == up[0]):
+           if(passhash == up[1]):
+               return True, usr
+    return False, usr
+
+def main():
+    zone = sys.argv[1]
+    ptrzone = "230.186.136.in-addr.arpa"
+    auth = False
+    usr = ""
+    if(len(sys.argv) > 2):
+       auth, usr =  authenticate(sys.argv[2], sys.argv[3])
+    else:
+       auth, usr  = authenticateprompts()
+    if(not auth):
+       print("Incorrect User or Pass", file = sys.stderr)
+       return
+    
+    perms = subprocess.getoutput("gap %s" %(usr))
+    if(zone not in perms):
+       print("You do not have permission to Edit this Zone")
+       return
+    choose(zone,ptrzone)
+
+def choose(zone, ptrzone):
+    print("Do you wish to Add, Delete, or Edit a record from %s [a/d/e]" %(zone))
+    option = input()
+    command_list = []
+
+    if(option ==  "a"): 
+            command_list = add_prompts(zone, ptrzone)
+    elif(option =="d"): 
+            command_list = delete_prompts(zone, ptrzone)
+    elif(option == "e"): 
+            command_list = edit_prompts(zone, ptrzone)
+    else:
+        print("Invalid Option")
+        choose(zone,ptrzone)
+    cinput = generate_command_input(command_list)
+    #print(cinput)
+    key = "/usr/local/etc/namedb/keys/ddns-key.%s" %(zone)
+    subprocess.run(["nsupdate", '-k', key], input = cinput.encode())
+
+if __name__ == '__main__':
+    main()
+

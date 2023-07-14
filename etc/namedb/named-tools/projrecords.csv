@@ -1,0 +1,4 @@
+csv,3600, A, 136.186.230.34
+tsv,3600,CNAME, csv.proj
+myhost,3600,A,127.0.0.1
+datafarm,3600,A,124.232.2.4
